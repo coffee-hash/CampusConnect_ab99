@@ -44,3 +44,49 @@ export const registrations: Registration[] = [
 export function getRegistrationsForStudent(studentId: string): Registration[] {
   return registrations.filter((reg) => reg.studentId === studentId)
 }
+
+// ============================================================================
+// NEW LOGIC ADDED FOR TASK 2 (REGISTRATION) AND TASK 3 (CANCELLATION)
+// ============================================================================
+
+/** 
+ * Checks if a student is already actively registered for an event (Task 2). 
+ * Used to prevent duplicate registrations.
+ */
+export function hasActiveRegistration(eventId: string, studentId: string): boolean {
+  return registrations.some(
+    (reg) => reg.eventId === eventId && reg.studentId === studentId && reg.status === 'confirmed'
+  )
+}
+
+/** 
+ * Pushes a new registration into the array (Task 2). 
+ */
+export function createRegistration(eventId: string, studentId: string): Registration {
+  const newRegistration: Registration = {
+    // Generate a simple pseudo-unique ID for the mock database
+    id: `reg-\({Date.now()}-\){Math.floor(Math.random() * 1000)}`,
+    eventId,
+    studentId,
+    status: 'confirmed',
+    registeredAt: new Date().toISOString(),
+  }
+  
+  registrations.push(newRegistration)
+  return newRegistration
+}
+
+/** 
+ * Updates a registration's status to 'cancelled' (Task 3).
+ * Returns true if successful, false if the registration wasn't found.
+ */
+export function cancelRegistration(registrationId: string): boolean {
+  const registration = registrations.find((reg) => reg.id === registrationId)
+  
+  if (registration && registration.status !== 'cancelled') {
+    registration.status = 'cancelled'
+    return true
+  }
+  
+  return false
+}
